@@ -1,0 +1,13 @@
+.profile__avatar-hover {
+  top: 0;
+  left: 0;
+  display: none;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8) url('../../../images/icon-pen.svg') center center / 26px 26px no-repeat;
+  cursor: pointer;
+  align-self: center;
+  border-radius: 100%;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}

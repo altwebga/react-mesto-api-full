@@ -1,0 +1,5 @@
+.popup__img-container {
+    box-sizing: border-box;
+    position: relative;
+    margin: 0 auto;
+}

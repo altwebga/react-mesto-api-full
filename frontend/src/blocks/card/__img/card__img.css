@@ -1,0 +1,12 @@
+.card__img {
+	width: 282px;
+	height: 282px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	-o-object-fit: cover;
+	object-fit: cover;
+	transition: all 0.3s ease-out;
+}
+.card__img:hover {
+	filter: brightness(0.6);
+}

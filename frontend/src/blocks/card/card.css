@@ -1,0 +1,28 @@
+.card {
+  padding: 50px 200px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  -moz-column-gap: 17px;
+  column-gap: 17px;
+  row-gap: 20px;
+}
+@media (max-width: 1279px) {
+  .card {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+@media (max-width: 995px) {
+  .card {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 767.98px) {
+  .card {
+    padding-top: 36px;
+    padding-left: 19px;
+    padding-right: 19px;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
