@@ -1,0 +1,9 @@
+.card__place {
+  background-color: #fff;
+  border-radius: 10px;
+  display: flex;
+  position: relative;
+  width: 282px;
+  flex-wrap: wrap;
+  flex-direction: row;
+}

@@ -1,0 +1,6 @@
+.profile__wrapper {
+    display: flex;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

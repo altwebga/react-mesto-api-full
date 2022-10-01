@@ -1,0 +1,14 @@
+.login__form {
+  margin-top: 20px;
+  width: 358px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 730px) {
+  .login__form {
+    max-width: 282px;
+    padding: 25px 22px;
+  }
+}
