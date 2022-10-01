@@ -8,7 +8,7 @@ const NotFoundError = require('./errors/notFoundError404');
 const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/unknownError500');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 
