@@ -14,7 +14,20 @@ const { PORT = 3001 } = process.env;
 
 const app = express();
 
-app.use(cors());
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'http://mesto44.nomoredomains.icu',
+    'https://mesto44.nomoredomains.icu',
+  ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
+  credentials: true,
+};
+
+app.use('*', cors(options));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
