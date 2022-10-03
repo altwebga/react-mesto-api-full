@@ -8,13 +8,13 @@ const { errors } = require('celebrate');
 const NotFoundError = require('./errors/notFoundError404');
 const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/unknownError500');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3001 } = process.env;
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -41,6 +41,9 @@ app.all('/*', (req, res, next) => {
 
 app.use(errors());
 app.use(errorsHandler);
+
+app.use(requestLogger);
+app.use(errorLogger);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
