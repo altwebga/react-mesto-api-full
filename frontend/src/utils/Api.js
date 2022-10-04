@@ -118,8 +118,8 @@ class Api {
 
 
 export const api = new Api({
-  baseUrl: 'http://backend.mesto44.nomoredomains.icu',
-	// baseUrl: 'https://backend.mesto44.nomoredomains.icu',
+  // baseUrl: 'http://backend.mesto44.nomoredomains.icu',
+	baseUrl: 'https://backend.mesto44.nomoredomains.icu',
 	// baseUrl: 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json'
