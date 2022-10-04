@@ -1,36 +1,54 @@
-import { useRef } from 'react';
-import PopupWithForm from './PopupWithForm';
+import React, { useEffect, useRef } from 'react';
+import Popup from './Popup';
+import UseValidation from '../hooks/UseValidation';
 
-const EditAvatarPopup = ({ isOpen, onClose, onUpdateAvatar }) => {
-  const linkRef = useRef('');
+function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, submitButtonText, setSubmitButtonText }) {  
+    const inputRef = useRef();    
+    const { isFormValid, values, handleValues, errors, setInitialValues } = UseValidation(); 
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    onUpdateAvatar({
-      avatar: linkRef.current.value,
-    });
-  }
-  return (
-    <PopupWithForm
-      name="edit_photo"
-      title="Обновить аватар"
-      buttonText="Сохранить"
-      isOpen={isOpen}
-      onClose={onClose}
-      onSubmit={handleSubmit}
-    >
-      <input
-        required
-        id="photo-input"
-        placeholder="Ссылка на картинку"
-        type="url"
-        name="link"
-        className="popup__text popup__text_value_link"
-        ref={linkRef}
-      />
-      <span className="popup__text-error photo-input-error"></span>
-    </PopupWithForm>
-  );
-};
+    useEffect(() => {
+        if(isOpen){
+            setSubmitButtonText('Сохранить')
+            setInitialValues({ avatar: '' })
+        }
+    }, [isOpen])
+
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        onUpdateAvatar({ avatar: inputRef.current.value });
+    }
+
+
+    return (
+        <Popup
+                    onSubmit={handleSubmit}
+                    onClose={onClose}
+                    isOpen={isOpen}
+                    name='edit-avatar'
+                    title='Обновить аватар'
+                    submitButtonText={submitButtonText}
+                    isFormValid={isFormValid}
+                >       
+                    
+                    <fieldset className="popup__inputs">
+                        <input 
+                        ref={inputRef}
+                        value={values.avatar || ''}
+                        onChange={handleValues}
+                        name="avatar"
+                        id="edit-avatar-url"
+                        className="popup__input popup__input_type_mesto-url" 
+                        type="url" 
+                        placeholder="Ссылка на картинку" 
+                        noValidate
+                        required
+                        />
+                        <p className="popup__error edit-avatar-url-error">{errors.avatar}</p>
+                    </fieldset>
+                
+                </Popup>
+    );
+}
 
 export default EditAvatarPopup;

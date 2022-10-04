@@ -1,59 +1,67 @@
-import { useState } from 'react';
-import PopupWithForm from './PopupWithForm';
+import React, { useEffect } from 'react';
+import Popup from './Popup';
+import UseValidation from '../hooks/UseValidation';
 
-const AddPlacePopup = ({ isOpen, onClose, onAddPlace }) => {
-  const [nameValue, setNameValue] = useState('');
-  const [linkValue, setLinkValue] = useState('');
+function AddPlacePopup({ isOpen, onClose, onAddPlace, submitButtonText, setSubmitButtonText }) {
+    const { isFormValid, values, handleValues, errors, setInitialValues } = UseValidation();
+    
+    useEffect(() => {
+        if(isOpen){
+            setSubmitButtonText('Сохранить')
+            setInitialValues({name: '', link: ''}) 
+        }    
+    }, [isOpen])
 
-  const handlePlaceNameChange = (e) => {
-    setNameValue(e.target.value);
-  };
 
-  const handlePlaceLinkChange = (e) => {
-    setLinkValue(e.target.value);
-  };
+    function handleSubmit(e) {
+        e.preventDefault();     
+        onAddPlace({ name: values.name, link: values.link});
+    } 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    onAddPlace({ name: nameValue, link: linkValue });
-  };
+    return (
+        <Popup
+                    onSubmit={handleSubmit}
+                    onClose={onClose}
+                    isOpen={isOpen}
+                    name='add-card'
+                    title='Новое место'
+                    submitButtonText={submitButtonText}
+                    isFormValid={isFormValid}
+                > 
 
-  return (
-    <PopupWithForm
-      name="edit_cards"
-      title="Новое место"
-      buttonText="Создать"
-      isOpen={isOpen}
-      onClose={onClose}
-      onSubmit={handleSubmit}
-    >
-      <input
-        required
-        minLength="2"
-        maxLength="30"
-        id="place-input"
-        placeholder="Название"
-        type="text"
-        name="name"
-        className="popup__text popup__text_value_title"
-        value={nameValue || ''}
-        onChange={handlePlaceNameChange}
-      />
-      <span className="popup__text-error place-input-error"></span>
-      <input
-        required
-        id="link-input"
-        placeholder="Ссылка на картинку"
-        type="url"
-        name="link"
-        className="popup__text popup__text_value_link"
-        value={linkValue || ''}
-        onChange={handlePlaceLinkChange}
-      />
-      <span className="popup__text-error link-input-error"></span>
-    </PopupWithForm>
-  );
-};
+                <fieldset className="popup__inputs">
+                    <input 
+                    value={values.name || ''}
+                    onChange={handleValues}
+                    name="name"
+                    id="edit-foto-name"
+                    className="popup__input popup__input_type_mesto-name" 
+                    type="text" 
+                    placeholder="Название" 
+                    minLength="2"
+                    maxLength="30"
+                    noValidate
+                    required
+                    />
+                    <p className="popup__error edit-foto-name-error">{errors.name}</p>
+
+                    <input 
+                    value={values.link || ''}
+                    onChange={handleValues}
+                    name="link"
+                    id="edit-foto-url"
+                    className="popup__input popup__input_type_mesto-url" 
+                    type="url" 
+                    placeholder="Ссылка на картинку" 
+                    noValidate
+                    required
+                    />
+                    <p className="popup__error edit-foto-url-error">{errors.link}</p>
+                </fieldset>
+           
+        </Popup>
+    );
+}
 
 export default AddPlacePopup;

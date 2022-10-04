@@ -1,71 +1,64 @@
-import React from "react";
-import { withRouter } from "react-router-dom";
+import React, { useEffect } from 'react';
+import UseValidation from '../hooks/UseValidation';
+import Forma from './Forma';
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+function Login({ submitButtonText, setSubmitButtonText, loggedIn, onLogin }) {
+    const { isFormValid, values, handleValues, errors, setInitialValues } = UseValidation();
+    
+    useEffect(() => {
+        setSubmitButtonText('Войти')
+        setInitialValues({email: '', pass: ''}) 
+    }, [])
 
-  handleChange(e) {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-    });
-  }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    if (!this.state.email || !this.state.password) {
-      return;
-    }
-    this.props.onSubmit({
-      email: this.state.email,
-      password: this.state.password,
-      clearInputs: () => this.setState({ email: "", password: "" }),
-    });
-  }
-  render() {
+    function handleSubmit(e) {
+        e.preventDefault();     
+        onLogin({ password: values.pass, email: values.email });
+    } 
+
+
     return (
-      <div className="login">
-        <p className="login__welcome">Вход</p>
-        <form onSubmit={this.handleSubmit} className="login__form">
-          <input
-            required
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={this.state.email}
-            onChange={this.handleChange}
-            className="login__form-input"
-          />
-          <input
-            required
-            name="password"
-            type="password"
-            placeholder="Пароль"
-            value={this.state.password}
-            onChange={this.handleChange}
-            className="login__form-input"
-          />
-          <div className="login__button-container">
-            <button
-              type="submit"
-              onSubmit={this.handleSubmit}
-              className="login__link"
-            >
-              Войти
-            </button>
-          </div>
-        </form>
-      </div>
+        <Forma
+                loggedIn={loggedIn}
+                onSubmit={handleSubmit}
+                name='login'
+                title='Вход'
+                submitButtonText={submitButtonText}
+                isFormValid={isFormValid}
+            >       
+                
+            <fieldset className="popup__inputs">
+                <input 
+                value={values.email || ''}
+                onChange={handleValues}
+                name="email"
+                id="email"
+                className="static-form__input" 
+                type="email" 
+                placeholder="Email" 
+                noValidate
+                required
+                />
+                <p className="popup__error">{errors.email}</p>
+
+                <input 
+                value={values.pass || ''}
+                onChange={handleValues}
+                name="pass"
+                id="pass"
+                className="static-form__input" 
+                type="password" 
+                minLength="6"
+                maxLength="30"
+                placeholder="Пароль" 
+                noValidate
+                required
+                />
+                <p className="popup__error">{errors.pass}</p>
+            </fieldset>
+                        
+        </Forma>
     );
-  }
 }
 
-export default withRouter(Login);
+export default Login;

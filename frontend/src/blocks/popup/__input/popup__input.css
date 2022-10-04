@@ -1,0 +1,28 @@
+.popup__input {
+    width: 99%;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    height: 35px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 15px;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.popup__input:focus::-webkit-input-placeholder {
+    color: transparent;
+}
+  
+.popup__input:focus::-moz-placeholder {
+    color: transparent;
+}
+
+.popup__input:focus:-moz-placeholder {
+    color: transparent;
+}
+
+.popup__input:focus:-ms-input-placeholder {
+    color: transparent;
+}
+

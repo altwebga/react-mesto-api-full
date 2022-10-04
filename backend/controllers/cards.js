@@ -1,67 +1,92 @@
 const Card = require('../models/card');
-const NotFoundError = require('../errors/notFoundError404');
-const ValidationError = require('../errors/validationError400');
-const ForbiddenError = require('../errors/forbiddenError403');
+const { BadRequestError } = require('../constants/BadRequestError');
+const { NotFoundError } = require('../constants/NotFoundError');
+const { ForbiddenError } = require('../constants/ForbiddenError');
+const {
+  CREATED_CODE,
+} = require('../constants/codes');
 
-module.exports.getAllCards = (req, res, next) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
+    .then((cards) => res.send({ data: cards.reverse() }))
     .catch(next);
 };
 
-module.exports.createCard = (req, res, next) => {
+module.exports.createCard = async (req, res, next) => {
+  const owner = req.user._id;
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError('400 - Переданы некорректные данные при создании карточки'));
-        return;
-      }
-      next(err);
-    });
+  try {
+    const card = await Card.create({ name, link, owner });
+    return res.status(CREATED_CODE).send({ data: card });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return next(new BadRequestError('Некорректные данные для создания карточки'));
+    }
+    return next(error);
+  }
 };
 
-module.exports.deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFoundError(`404 - Карточка с указанным _id ${req.params.cardId} не найдена`);
-      }
-      if (card.owner.toString() !== req.user._id) {
-        throw new ForbiddenError('403 - Вы не можете удалить чужую карточку');
-      }
-      return card.remove();
-    })
-    .then(() => {
-      res.send({ message: '200 - Карточка успешно удалена' });
-    })
-    .catch(next);
+module.exports.deleteCard = async (req, res, next) => {
+  try {
+    const card = await Card.findById(req.params.cardId);
+    const owner = req.user._id;
+
+    if (!card) {
+      throw new NotFoundError('Карточка с указанным _id не найдена');
+    }
+
+    if (card.owner.toString() !== owner) {
+      throw new ForbiddenError('Не достаточно прав для удаления');
+    }
+
+    await card.remove();
+
+    return res.send({ message: 'Карточка удалена успешно' });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return next(new BadRequestError('Неверный формат ID'));
+    }
+    return next(error);
+  }
 };
 
-module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail(
-      () => next(new NotFoundError(`404 - Передан несуществующий _id:${req.params.cardId} карточки`)),
-    )
-    .then((card) => res.send(card))
-    .catch(next);
+module.exports.likeCard = async (req, res, next) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $addToSet: { likes: req.user._id } },
+      { new: true },
+    );
+
+    if (!card) {
+      throw new NotFoundError('Карточка с указанным _id не найдена');
+    }
+    return res.send({ data: card });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return next(new BadRequestError('Неверный формат ID'));
+    }
+    return next(error);
+  }
 };
 
-module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail(
-      () => next(new NotFoundError(`404 - Передан несуществующий _id:${req.params.cardId} карточки`)),
-    )
-    .then((card) => res.send(card))
-    .catch(next);
+module.exports.dislikeCard = async (req, res, next) => {
+  try {
+    const card = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      { $pull: { likes: req.user._id } },
+      { new: true },
+    );
+
+    if (!card) {
+      throw new NotFoundError('Карточка с указанным _id не найдена');
+    }
+    return res.send({ data: card });
+  } catch (error) {
+    if (error.kind === 'ObjectId') {
+      return next(new BadRequestError('Неверный формат ID'));
+    }
+    return next(error);
+  }
 };

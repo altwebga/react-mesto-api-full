@@ -1,112 +1,127 @@
 class Api {
-  constructor(options) {
-    this.url = options.url;
-    this.headers = options.headers;
+  constructor({ baseUrl, headers }){
+      this._url = baseUrl;
+      this._headers = headers;
   }
 
   _getResponseData(res) {
     if (!res.ok) {
-      return Promise.reject(`Ошибка: ${res.status}`);
+        return Promise.reject(res.json()); 
     }
     return res.json();
   }
 
-  getUserInfo() {
-    return fetch(`${this.url}/users/me`, {
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
-  }
-
   getInitialCards() {
-    return fetch(`${this.url}/cards`, {
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+    this._headers.authorization = localStorage.getItem('jwt')
+    return fetch(`${this._url}/cards`, {
+      headers: this._headers
+      })
+      .then(res => this._getResponseData(res))
   }
 
-  sendProfileInfo(setName, setAbout) {
-    return fetch(`${this.url}/users/me`, {
-      method: 'PATCH',
-      headers: this.headers,
-      body: JSON.stringify({
-        name: setName,
-        about: setAbout,
-      }),
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
-  }
-
-  sendProfilePhoto(setPhoto) {
-    return fetch(`${this.url}/users/me/avatar`, {
-      method: 'PATCH',
-      headers: this.headers,
-      body: JSON.stringify({
-        avatar: setPhoto,
-      }),
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
-  }
-
-  postNewCard({ name, link }) {
-    return fetch(`${this.url}/cards`, {
+  createNewCard({name, link}) {
+    return fetch(`${this._url}/cards`, {
       method: 'POST',
-      headers: this.headers,
+      headers: this._headers,
       body: JSON.stringify({
-        name: name,
-        link: link,
-      }),
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+        name,
+        link
+      })
+    })
+    .then(res => this._getResponseData(res))
   }
 
-  deleteCard(id) {
-    return fetch(`${this.url}/cards/${id}`, {
+  deleteCard(cardId) {
+    return fetch(`${this._url}/cards/${cardId}`, {
       method: 'DELETE',
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+      headers: this._headers
+    })
+    .then(res => this._getResponseData(res))
   }
 
-  likeCard(id) {
-    return fetch(`${this.url}/cards/${id}/likes`, {
-      method: 'PUT',
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+
+  getProfileInfo() {
+    this._headers.authorization = localStorage.getItem('jwt')
+    return fetch(`${this._url}/users/me`, {
+      headers: this._headers
+      })
+      .then(res => this._getResponseData(res))
   }
 
-  deleteLikeCard(id) {
-    return fetch(`${this.url}/cards/${id}/likes`, {
-      method: 'DELETE',
-      headers: this.headers,
-    }).then((res) => {
-      return this._getResponseData(res);
-    });
+  changeProfileInfo({name, about}) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        name,
+        about
+      })
+    })
+    .then(res => this._getResponseData(res))
   }
 
-  changeLikeCardStatus(id, isLiked) {
-    if (isLiked) {
-      return this.likeCard(id);
-    } else {
-      return this.deleteLikeCard(id);
-    }
+  changeProfileAvatar({avatar}) {
+    return fetch(`${this._url}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        avatar
+      })
+    })
+    .then(res => this._getResponseData(res))
   }
+
+  setCardLike(cardId, method) {
+    return fetch(`${this._url}/cards/${cardId}/likes`, {
+      method: method,
+      headers: this._headers
+    })
+    .then(res => this._getResponseData(res))
+  }
+
+  register({ password, email }) {
+    return fetch(`${this._url}/signup`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        password,
+        email
+      })
+    })
+    .then(res => this._getResponseData(res))
+  }
+
+  login({ password, email }) {
+    return fetch(`${this._url}/signin`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify({
+        password,
+        email
+      })
+    })
+    .then(res => this._getResponseData(res))
+  }
+
+  checkToken(jwt) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'GET',
+      headers: {
+        ...this._headers,
+        "authorization": jwt
+      }
+    })
+    .then(res => this._getResponseData(res))
+  }
+  
 }
 
-const api = new Api({
-  // url: "http://backend.mesto44.nomoredomains.icu",
-	url: "http://localhost:3001",
-  headers: {
-       "Content-Type": "application/json",
-  },
-});
 
-export default api;
+export const api = new Api({
+  // baseUrl: 'http://backend.mesto44.nomoredomains.icu',
+	// baseUrl: 'https://backend.mesto44.nomoredomains.icu',
+	baseUrl: 'http://localhost:3001',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});

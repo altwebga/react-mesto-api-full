@@ -1,64 +1,41 @@
-require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-const NotFoundError = require('./errors/notFoundError404');
-const auth = require('./middlewares/auth');
-const errorsHandler = require('./middlewares/unknownError500');
+const routes = require('./routes/index');
+const { unknownError } = require('./middlewares/unknownError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3001 } = process.env;
-
 const app = express();
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'http://mesto44.nomoredomains.icu',
-    'https://mesto44.nomoredomains.icu',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
-  credentials: true,
-};
-
-app.use('*', cors(options));
-
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(cors());
 app.use(cookieParser());
-
-app.use('/', require('./routes'));
-
-app.use(auth);
-
-app.use('/users', require('./routes/users'));
-app.use('/cards', require('./routes/cards'));
-
-app.all('/*', (req, res, next) => {
-  next(new NotFoundError('Неправильный путь'));
-});
-
-app.use(errors());
-app.use(errorsHandler);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger);
+
+app.use(routes);
+
 app.use(errorLogger);
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Сервер запущен. Порт: ${PORT}`);
+app.use(errors());
+
+app.use((err, req, res, next) => {
+  unknownError(err, req, res, next);
+});
+
+app.listen(PORT, (err) => {
+  if (err) {
+    console.log('Ошибка при запуске', ...err);
+  }
+  console.log(`Сервер запущен на порту ${PORT}`);
 });

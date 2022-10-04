@@ -1,75 +1,47 @@
-import { Link, withRouter, Switch, Route } from "react-router-dom";
-import headerLogo from "../images/logo-white.svg";
+import logo from '../images/logo-white.svg';
+import { useLocation, Link, withRouter } from "react-router-dom";
+import { useState } from "react";
 
-function Header({ loggedIn, email, signOut }) {
-  const redirectButton = () => {
-    if (window.location.pathname === "/sign-in") {
-      return (
-        <Link to="/sign-up" className="header__link">
-          Зарегистрироваться
-        </Link>
-      );
-    } else {
-      return (
-        <Link to="/sign-in" className="header__link">
-          Войти
-        </Link>
-      );
-    }
-  };
+function Header(props) {
+	let location = useLocation();
 
-  const link = () => {
-    if (loggedIn) {
-      return (
-        <>
-          <p className="header__email">{email}</p>
-          <button
-            to="/sign-in"
-            className="header__link header__link_logged-in"
-            onClick={signOut}
-          >
-            Выйти
-          </button>
-        </>
-      );
-    } else {
-      return redirectButton();
-    }
-  };
+	const [isMobileMenuOpen, setisMobileMenuOpen] = useState(false);
 
-  return (
-    <header className="header">
-      <img className="logo header__logo" src={headerLogo} alt="Логотип" />
-      <div className="header__user-area">
-        {
-          <Switch>
-            <Route path="/sign-in">
-              <Link to="/sign-up" className="header__link">
-                Зарегистрироваться
-              </Link>
-            </Route>
-            <Route path="/sign-up">
-              <Link to="/sign-in" className="header__link">
-                Войти
-              </Link>
-            </Route>
-            <Route path="/">
-              <>
-                <p className="header__mail">{email}</p>
-                <button
-                  to="/sign-in"
-                  className="header__link header__link_logged-in"
-                  onClick={signOut}
-                >
-                  Выйти
-                </button>
-              </>
-            </Route>
-          </Switch>
-        }
-      </div>
-    </header>
-  );
+	function logOut() {
+		setisMobileMenuOpen(false)
+		props.signOut()
+	}
+
+	return (
+		<>
+			<div className={`${'header__top'} ${isMobileMenuOpen && 'header__top_visible'}`}></div>
+			<header className="header">
+
+				<Link to='/'><img className="logo" src={logo} alt="Место Россия" /></Link>
+
+				<nav className="header__links">
+					{(location.pathname === '/sign-in') ?
+						<Link className="header__link" to='/sign-up'>Регистрация</Link>
+						: (location.pathname === '/sign-up') ?
+							<Link className="header__link" to='/sign-in'>Войти</Link>
+							: <div className="header__loggedin">
+								<nav className={`${'header__loggedin_links'} ${isMobileMenuOpen && 'header__loggedin_links_visible'}`}>
+									<p className="header__email">{props.userEmail}</p>
+									<button className="header__link header__link_out" to='#' onClick={logOut}>Выйти</button>
+								</nav>
+
+								<label htmlFor='mobilemenu' className="mobile-menu" >
+									<input type="checkbox" name="mobilemenu" id="mobilemenu" className="mobile-menu__checkbox" onChange={() => setisMobileMenuOpen(!isMobileMenuOpen)} />
+									<span htmlFor='mobilemenu' className="mobile-menu__icon" />
+								</label>
+
+							</div>
+					}
+				</nav>
+
+			</header>
+		</>
+	);
 }
 
 export default withRouter(Header);

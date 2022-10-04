@@ -1,79 +1,71 @@
-import React from "react";
-import { Link, withRouter } from "react-router-dom";
+import React, { useEffect } from 'react';
+import UseValidation from '../hooks/UseValidation';
+import Forma from './Forma';
+import { Link } from "react-router-dom";
 
-class Register extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      password: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  componentDidMount() {}
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    this.setState({
-      [name]: value,
-    });
-  };
+function Register({ submitButtonText, setSubmitButtonText, loggedIn, onRegister }) {
+    const { isFormValid, values, handleValues, errors, setInitialValues } = UseValidation();
+    
+    useEffect(() => {
+        setSubmitButtonText('Зарегистрироваться')
+        setInitialValues({email: '', pass: ''}) 
+    }, [])
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    if (!this.state.email || !this.state.password) {
-      return;
-    }
-    this.props.onSubmit({
-      email: this.state.email,
-      password: this.state.password,
-    });
-  };
-  render() {
+
+    function handleSubmit(e) {
+        e.preventDefault();     
+        onRegister({ password: values.pass, email: values.email });
+    } 
+
+
     return (
-      <div className="register">
-        <p className="register__welcome">Регистрация</p>
-        <form onSubmit={this.handleSubmit} className="register__form">
-          <input
-            required
-            name="email"
-            type="email"
-            placeholder="Email"
-            value={this.state.email}
-            onChange={this.handleChange}
-            className="register__form-input"
-          />
-          <input
-            required
-            name="password"
-            type="password"
-            placeholder="Пароль"
-            value={this.state.password}
-            onChange={this.handleChange}
-            className="register__form-input"
-          />
-          <div className="register__button-container">
-            <button
-              type="submit"
-              onSubmit={this.handleSubmit}
-              className="register__link"
-            >
-              Зарегистрироваться
-            </button>
-          </div>
-        </form>
+        <>
+        
+        <Forma
+                loggedIn={loggedIn}
+                onSubmit={handleSubmit}
+                name='login'
+                title='Регистрация'
+                submitButtonText={submitButtonText}
+                isFormValid={isFormValid}
+            >       
+                
+            <fieldset className="popup__inputs">
+                <input 
+                value={values.email || ''}
+                onChange={handleValues}
+                name="email"
+                id="email"
+                className="static-form__input" 
+                type="email" 
+                placeholder="Email" 
+                noValidate
+                required
+                />
+                <p className="popup__error">{errors.email}</p>
 
-        <div className="register__signin">
-          <p className="register__signin-text">
-            Уже зарегистрированы?{" "}
-            <Link to="/sign-in" className="register__login-link">
-              Войти
-            </Link>
-          </p>
-        </div>
-      </div>
+                <input 
+                value={values.pass || ''}
+                onChange={handleValues}
+                name="pass"
+                id="pass"
+                className="static-form__input" 
+                type="password" 
+                minLength="6"
+                maxLength="30"
+                placeholder="Пароль" 
+                noValidate
+                required
+                />
+                <p className="popup__error">{errors.pass}</p>
+            </fieldset>
+                        
+        </Forma>
+
+        <p className="static-form__undertext">Уже зарегистрированы? <Link className="header__link header__link_place_form" to='/sign-in'>Войти</Link></p>
+        
+        </>
     );
-  }
 }
 
-export default withRouter(Register);
+export default Register;

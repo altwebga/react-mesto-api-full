@@ -1,7 +1,0 @@
-.profile__avatar-wrapper {
-  position: relative;
-}
-
-.profile__avatar-wrapper:hover .profile__avatar-hover {
-  display: block;
-}

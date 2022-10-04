@@ -1,0 +1,18 @@
+.mobile-menu {
+    display: none;
+    align-items: center;
+    position: relative;
+    height: 22px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.mobile-menu:hover {
+    opacity: 0.6;
+}
+
+@media (max-width: 700px) {
+    .mobile-menu {
+        display: flex;
+    }
+}

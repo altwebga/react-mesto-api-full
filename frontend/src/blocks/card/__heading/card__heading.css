@@ -1,0 +1,9 @@
+.card__heading {
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 20px 25px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}

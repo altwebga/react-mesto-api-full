@@ -1,8 +1,45 @@
-.profile__avatar {
-  cursor: pointer;
-  align-self: center;
-  border-radius: 100%;
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
+.profile__avatar {    
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-right: 30px;
+}
+
+.profile__avatar::after {
+    content: '';
+    background: rgba(0, 0, 0, 0.8);
+    background-image: url(../../../images/icon-pen.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    transition: all .5s ease;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.profile__avatar:hover::after {
+    visibility: visible;
+    opacity: 1;
+    cursor: pointer;
+}
+
+@media (max-width: 770px) {
+    .profile__avatar {
+        margin-right: 0;
+    }
+
+    .profile__avatar::after {
+        margin: 0 auto;
+    }
+
+    /* .profile__avatar:hover::after {
+        margin-right: 0;
+    } */
 }

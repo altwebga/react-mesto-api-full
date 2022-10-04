@@ -1,0 +1,8 @@
+.header__loggedin {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 25px;
+    margin: 0;
+}
+

@@ -1,0 +1,20 @@
+.static-form__input {
+    margin-top: 5px;
+    border: none;
+    border-bottom: 2px solid #CCCCCC;
+    height: 30px;
+    background: transparent;
+    color: #CCCCCC;
+    font-size: 14px;
+    outline: none;
+    padding: 0;
+}
+
+.static-form__input::placeholder {
+    color: #CCCCCC;
+    transition: all 0.2s ease;
+}
+
+.static-form__input:focus::placeholder {
+    color: black;
+}

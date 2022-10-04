@@ -1,72 +1,86 @@
-import { useState, useContext, useEffect } from 'react';
-import userContext from '../contexts/CurrentUserContext';
-import PopupWithForm from './PopupWithForm';
+import React, { useState, useEffect } from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import Popup from './Popup';
+import UseValidation from '../hooks/UseValidation';
 
-const EditProfilePopup = ({ isOpen, onClose, onUpdateUser }) => {
-  const [nameValue, setNameValue] = useState('');
-  const [descriptionValue, setDescriptionValue] = useState('');
+function EditProfilePopup({ isOpen, onClose, onUpdateUser, submitButtonText, setSubmitButtonText }) {
+    const currentUser = React.useContext(CurrentUserContext);
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
 
-  const user = useContext(userContext);
+    const { isFormValid, handleValues, errors, setErrors } = UseValidation();
 
-  useEffect(() => {
-    setNameValue(user.name);
-    setDescriptionValue(user.description);
-  }, [user, isOpen]);
+    function handleNameChange(e) {
+        setName(e.target.value);
+        handleValues(e)
+    } 
 
-  const handleUsernameChange = (e) => {
-    setNameValue(e.target.value);
-  };
+    function handleAboutChange(e) {
+        setDescription(e.target.value);
+        handleValues(e)
+    } 
+ 
+    useEffect(() => { 
+        if(isOpen){
+            setName(currentUser.name);
+            setDescription(currentUser.about);
+            setErrors({})
+            setSubmitButtonText('Сохранить')
+        }
+    }, [currentUser, isOpen]); 
 
-  const handleUserDescriptionChange = (e) => {
-    setDescriptionValue(e.target.value);
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    function handleSubmit(e) {
+        e.preventDefault();      
+        onUpdateUser({ name, about: description });
+    } 
 
-    onUpdateUser({
-      name: nameValue,
-      about: descriptionValue,
-    });
-  };
 
-  return (
-    <PopupWithForm
-      name="edit_profile"
-      title="Редактировать профиль"
-      buttonText="Сохранить"
-      onSubmit={handleSubmit}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <input
-        required
-        minLength="2"
-        maxLength="40"
-        id="name-input"
-        placeholder="Имя"
-        type="text"
-        name="name"
-        className="popup__text popup__text_value_name"
-        value={nameValue || ''}
-        onChange={handleUsernameChange}
-      />
-      <span className="popup__text-error name-input-error"></span>
-      <input
-        required
-        minLength="2"
-        maxLength="200"
-        id="job-input"
-        placeholder="Профессия"
-        type="text"
-        name="description"
-        className="popup__text popup__text_value_descr"
-        value={descriptionValue || ''}
-        onChange={handleUserDescriptionChange}
-      />
-      <span className="popup__text-error job-input-error"></span>
-    </PopupWithForm>
-  );
-};
+    return (
+        <Popup
+                    onSubmit={handleSubmit}
+                    onClose={onClose}
+                    isOpen={isOpen}
+                    name='edit-profile'
+                    title='Редактировать профиль'
+                    submitButtonText={submitButtonText}
+                    isFormValid={isFormValid}
+                >       
+
+                    <fieldset className="popup__inputs">
+
+                        <input 
+                        value={name ?? ""}
+                        onChange={handleNameChange}
+                        name="name"
+                        id="edit-profile-name"
+                        className="popup__input popup__input_type_name" 
+                        type="text" 
+                        minLength="2"
+                        maxLength="40"
+                        noValidate
+                        required
+                        />
+                        <p className="popup__error edit-profile-name-error">{errors.name}</p>
+
+                        <input 
+                        value={description ?? ""}
+                        onChange={handleAboutChange}
+                        name="about"
+                        id="edit-profile-bio"
+                        className="popup__input popup__input_type_descr" 
+                        type="text" 
+                        minLength="2"
+                        maxLength="200"
+                        noValidate
+                        required
+                        />
+                        <p className="popup__error edit-profile-bio-error">{errors.about}</p>
+
+                    </fieldset>
+
+                </Popup>
+    );
+}
 
 export default EditProfilePopup;

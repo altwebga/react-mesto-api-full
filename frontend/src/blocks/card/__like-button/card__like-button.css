@@ -1,0 +1,16 @@
+.card__like-button {
+    background-image: url(../../../images/icon-heart-light.svg);
+    background-color: transparent;
+    background-size: cover;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 22px;
+    height: 19px;
+    padding: 0;
+}
+
+.card__like-button:hover {
+    opacity: 0.6;
+}

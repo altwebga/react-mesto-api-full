@@ -1,18 +1,15 @@
-function ImagePopup({ card, isOpen, onClose, onCardClick }) {
-  return (
-    <div className={`popup popup_img ${isOpen ? 'popup_opened' : null} `}>
-      <div className="popup__img-container">
-        <img
-          className="popup__image"
-          src={card.link}
-          alt={card.name}
-          onClick={onCardClick}
-        />
-        <button type="button" className="popup__close" onClick={onClose} />
-        <p className="popup__img-descr">{card.name}</p>
-      </div>
-    </div>
-  );
+function ImagePopup({ isOpen, selectedCard, onClose }) {
+    
+    return (
+            <section id="foto-popup" className={`popup popup_type_foto-popup ${isOpen && 'popup_active'}`}>
+                <div className="popup__foto">
+                    <img className="popup__img" src={selectedCard.link} alt={selectedCard.name} />
+                    <h2 className="popup__text">{selectedCard.name}</h2>
+                    <button className="popup__close" type="button" onClick={onClose} />
+                </div>
+                <div className="popup__bg" onClick={onClose} />
+            </section>
+    );
 }
 
 export default ImagePopup;
