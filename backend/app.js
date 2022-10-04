@@ -35,7 +35,9 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, (err) => {
   if (err) {
+    // eslint-disable-next-line no-console
     console.log('Ошибка при запуске', ...err);
   }
+  // eslint-disable-next-line no-console
   console.log(`Сервер запущен на порту ${PORT}`);
 });
