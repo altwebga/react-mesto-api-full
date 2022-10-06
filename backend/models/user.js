@@ -5,14 +5,14 @@ const { urlRegExp } = require('../constants/regExp');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: 2,
-    maxlength: 30,
+    minlength: [2, 'Имя должно быть длиннее 2х символов, текущая длина {VALUE}'],
+    maxlength: [30, 'Имя должно быть короче 30ти символов, текущая длина {VALUE}'],
     default: 'Жак-Ив Кусто',
   },
   about: {
     type: String,
-    minlength: 2,
-    maxlength: 30,
+    minlength: [2, 'Описание должно быть длиннее 2х символов, текущая длина {VALUE}'],
+    maxlength: [30, 'Описание должно быть короче 30ти символов, текущая длина {VALUE}'],
     default: 'Исследователь',
   },
   avatar: {
