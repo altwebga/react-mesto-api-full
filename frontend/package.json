@@ -17,7 +17,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "scp -r ./build/* mesto@84.252.142.165:/home/mesto/react-mesto-api-full/frontend"
+    "deploy": "scp -r ./build/* mesto@51.250.97.20:/home/mesto/react-mesto-api-full/frontend"
   },
   "eslintConfig": {
     "extends": [
